@@ -19,9 +19,15 @@ namespace JBNG20250326.AppWebMVC.Controllers
         }
 
         // GET: Warehouses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Warehouse warehouse)
         {
-            return View(await _context.Warehouses.ToListAsync());
+            var query = _context.Warehouses.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(warehouse.WarehouseName))
+                query = query.Where(s => s.WarehouseName.Contains(warehouse.WarehouseName));
+
+
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Warehouses/Details/5
