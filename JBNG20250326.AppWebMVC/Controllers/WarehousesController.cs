@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JBNG20250326.AppWebMVC.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JBNG20250326.AppWebMVC.Controllers
 {
+    [Authorize]
     public class WarehousesController : Controller
     {
         private readonly Test20250326DbContext _context;
