@@ -19,10 +19,31 @@ namespace JBNG20250326.AppWebMVC.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Product product, int topRegistro = 10)
         {
-            var test20250326DbContext = _context.Products.Include(p => p.Brand).Include(p => p.Warehouse);
-            return View(await test20250326DbContext.ToListAsync());
+            var query = _context.Products.AsQueryable();
+            if (product.Id > 0)
+                query = query.Where(s => s.Id == product.Id);
+            if (product.Id > 0)
+                query = query.Where(s => s.Id == product.Id);
+            if (topRegistro > 0)
+                query = query.Take(topRegistro);
+             
+            if (!string.IsNullOrWhiteSpace(product.ProductName))
+                query = query.Where(s => s.ProductName.Contains(product.ProductName));
+
+
+
+            var test20250319DbContext = _context.Products.Include(p => p.Brand).Include(p => p.Warehouse);
+
+
+            var brands = _context.Brands.ToList();
+            brands.Add(new Brand { BrandName = "SELECCIONAR", Id = 0 });
+            var categories = _context.Warehouses.ToList();
+            categories.Add(new Warehouse { WarehouseName = "SELECCIONAR", Id = 0 });
+           // ViewData["Id"] = new SelectList(categories, "Id", "WarehouseName", 0);
+            //ViewData["Id"] = new SelectList(brands, "Id", "BrandName", 0);
+            return View(await query.ToListAsync());
         }
 
         // GET: Products/Details/5
@@ -48,8 +69,8 @@ namespace JBNG20250326.AppWebMVC.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Id");
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Id");
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "BrandName");
+            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "WarehouseName");
             return View();
         }
 
@@ -84,8 +105,8 @@ namespace JBNG20250326.AppWebMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Id", product.BrandId);
-            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "Id", product.WarehouseId);
+            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "BrandName", product.BrandId);
+            ViewData["WarehouseId"] = new SelectList(_context.Warehouses, "Id", "WarehouseName", product.WarehouseId);
             return View(product);
         }
 
